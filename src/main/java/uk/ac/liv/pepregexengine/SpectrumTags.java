@@ -19,17 +19,22 @@ import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 public class SpectrumTags {
 
     private final MgfReader mgfRd;
-    private final double parts = 50;
-    private final double million = 1000000;
-    private final double ppmError = parts / million;  //initialising as follows doesn't work? ppmError = 3/100000
+    private final static double parts = 50;
+    private final static double million = 1000000;
+    private final static double ppmError = parts / million;  //initialising as follows doesn't work? ppmError = 3/100000
+
+    public SpectrumTags() {
+        this.mgfRd = null;
+    }
 
     public SpectrumTags(File spectrumFile)
             throws JMzReaderException {
         this.mgfRd = new MgfReader(spectrumFile);
     }
 
-    public List<Object[]> generateTags(String specTitle, TDoubleList spectrum,
-                                       double pepMass) {
+    public static List<Object[]> generateTags(String specTitle,
+                                              TDoubleList spectrum,
+                                              double pepMass) {
 
         List<Object[]> spectrumTags = new ArrayList<>();
         double biggestMass = AAMap.getAaMasses().max() + 0.5;
@@ -53,7 +58,6 @@ public class SpectrumTags {
 
         //First pass through the spectrum looks for perfect tags
         for (int i = 0; i < spectrum.size(); i++) {
-
             double outerMass = Double.parseDouble(df.format(spectrum.get(i)));
             //System.out.println("o:" + outerMass);
             for (int j = i + 1; j < spectrum.size(); j++) {
@@ -62,7 +66,7 @@ public class SpectrumTags {
                 double delta = Double.parseDouble(df.format(innerMass - outerMass));
                 //System.out.println("\ti:" + innerMass);
 
-                Boolean aaFound = false;
+                //Boolean aaFound = false;
                 if (delta > smallestMass && delta < biggestMass) {
                     // set a range for delta mass between two spectrums (innerMass, outerMass)
                     double topRange = delta + (ppmError * innerMass);
@@ -73,18 +77,18 @@ public class SpectrumTags {
                         double aa = AAMap.getAaMasses().get(k);
                         //System.out.print("\t\t\t" + aa);
 
-                        // check if an amino acid mass falls into the range of delta mass
+                        // check if SINGLE amino acid mass falls into the range of delta mass
                         if (aa > bottomRange && aa < topRange) {
                             //System.out.print("Found" + aa);
-                            aaFound = true; // found a possible amino acid
+                            //aaFound = true; // found a possible amino acid
 //                            double error = delta - aa;
 //                            double prefix = outerMass;
 //                            double suffix = pepMass - innerMass;
-                            String foundAA = AAMap.getAaMapRev().get(aa);
+                            String foundAAString = AAMap.getAaMapRev().get(aa);
                             // String resLine = foundAA + "," + outerMass + "," + innerMass + "," + delta + "," + error + "," + suffix;
 
                             if (endPosToTag.containsKey(outerMass)) {
-                                String currTag = endPosToTag.get(outerMass) + foundAA;    //Add to chain
+                                String currTag = endPosToTag.get(outerMass) + foundAAString;    //Add to chain
                                 endPosToTag.put(innerMass, currTag);
                                 //System.out.println("Adding to tag, inner: " + innerMass + " outer: " + outerMass + " tag: " +currTag);
                             }
@@ -98,7 +102,7 @@ public class SpectrumTags {
                                  * prefixMass = outerMass;
                                  * }
                                  */
-                                endPosToTag.put(innerMass, "" + outerMass + "," + prefixMass + "," + foundAA);
+                                endPosToTag.put(innerMass, "" + outerMass + "," + prefixMass + "," + foundAAString);
                                 //System.out.println("Found tag, inner: " + innerMass + " outer: " + outerMass + " tag: " +foundAA);
                             }
 
@@ -120,7 +124,7 @@ public class SpectrumTags {
             String temp[] = tempTag.split(",");
             String startPos = temp[0]; // outerMass
             //temp[1] is prefixMass which is not changed here
-            
+
             String tag = temp[2]; // foundAA
             double suffixMass = pepMass - endPosition;
 
@@ -136,6 +140,8 @@ public class SpectrumTags {
 
         //Second pass through the data to generate longer strings, including ambiguity
         //Reset if allowed paired amino acids
+        biggestMass = AAMap.getRegexAAMasses().max() + 0.5;
+        smallestMass = AAMap.getRegexAAMasses().min() - 0.5;
         endPosToTag = new TDoubleObjectHashMap<>();    //start again
         for (int i = 0; i < spectrum.size(); i++) {
 
@@ -159,7 +165,7 @@ public class SpectrumTags {
                             double error = delta - aa;
                             double prefix = outerMass;
                             double suffix = pepMass - innerMass;
-                            String foundAA = AAMap.getAaMapRev().get(aa);
+                            String foundAA = AAMap.getRegexAAMapRev().get(aa);
                             //String resLine = foundAA + "," + outerMZ + "," + innerMZ + "," + delta + "," + error + "," + suffix;
 
                             if (endPosToTag.containsKey(outerMass)) {
@@ -169,17 +175,6 @@ public class SpectrumTags {
                             else {
                                 double prefixMass = outerMass;
 
-                                /*
-                                 * if(doProteins){
-                                 *
-                                 * prefixMass = outerMass- CTERM - HMASS; //I don't see why this works but it seems to TODO TO DO
-                                 * }
-                                 * else{
-                                 *
-                                 * prefixMass = outerMass;
-                                 * }
-                                 *
-                                 */
                                 endPosToTag.put(innerMass, "" + outerMass + "," + prefixMass + "," + foundAA);
                             }
 
@@ -198,10 +193,10 @@ public class SpectrumTags {
                             //System.out.print("\t" + aa);
 
                             if (aa > bottomRange && aa < topRange) {
-                                double error = delta - aa;
-                                double prefix = outerMass;
-                                double suffix = pepMass - innerMass;
-                                String foundRegex = "[" + AAMap.getAaMapRev().get(aa) + "]";
+//                                double error = delta - aa;
+//                                double prefix = outerMass;
+//                                double suffix = pepMass - innerMass;
+                                String foundRegex = "[" + AAMap.getRegexAAMapRev().get(aa) + "]";
                                 //System.out.println(foundPair + "\t" + outerMZ + "\t" + innerMZ+ "\t" + delta + "\t" + error + "\t" + suffix);
                                 k = AAMap.getRegexAAMasses().size();
                                 if (endPosToTag.containsKey(outerMass)) {
@@ -232,7 +227,10 @@ public class SpectrumTags {
         for (double endPosition : endPosToTag.keys()) {
             String tempTag = endPosToTag.get(endPosition);
             String temp[] = tempTag.split(",");
-            String startPos = temp[0];
+            //String startPos = temp[0];
+            if (temp[2].contains("null")){
+                System.out.println("Something wrong with the null value, please check!");
+            }
             String tag = "%%" + temp[2];//To denote this is now a regular expression
             double suffixMass = pepMass - endPosition;
 

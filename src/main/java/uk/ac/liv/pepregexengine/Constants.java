@@ -18,4 +18,5 @@ public class Constants {
 
     public static final int MIN_TAG_LENGTH_FOR_SEARCH = 2;
     public static final double MIN_SCORE_THRESHOLD = 5.0;
+    public static final double TAG_MATCH_ERROR = 0.03;
 }

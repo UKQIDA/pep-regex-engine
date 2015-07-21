@@ -70,7 +70,7 @@ public class AAMap {
                 regexAAMapRev.put(firstMass, newPaired);
             }
             else {
-                regexAAMapRev.put(firstMass, firstRes);
+                regexAAMapRev.put(firstMass, firstRes); //regexAAMapRev includes single amino acid residue
             }
 
             for (int j = 0; j < aaMasses.size(); j++) {
