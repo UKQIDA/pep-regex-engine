@@ -26,27 +26,26 @@ public class AAMap {
 
     // Class initialisation
     static {
-        aaMap.put("A", 71.037114);
-        aaMap.put("R", 156.101111);
-        aaMap.put("N", 114.042927);
-        aaMap.put("D", 115.026943);
-        aaMap.put("C", 103.009185);
-        aaMap.put("E", 129.042593);
-        aaMap.put("Q", 128.058578);
         aaMap.put("G", 57.021464);
-        aaMap.put("H", 137.058912);
+        aaMap.put("A", 71.037114);
+        aaMap.put("S", 87.032028);
+        aaMap.put("P", 97.052764);
+        aaMap.put("V", 99.068414);
+        aaMap.put("T", 101.047679);
+        aaMap.put("C", 103.009185);
         aaMap.put("I", 113.084064);
         aaMap.put("L", 113.084064);
+        aaMap.put("N", 114.042927);
+        aaMap.put("D", 115.026943);
+        aaMap.put("Q", 128.058578);
         aaMap.put("K", 128.094963);
+        aaMap.put("E", 129.042593);
         aaMap.put("M", 131.040485);
+        aaMap.put("H", 137.058912);
         aaMap.put("F", 147.068414);
-        aaMap.put("P", 97.052764);
-        aaMap.put("S", 87.032028);
-        aaMap.put("T", 101.047679);
-        aaMap.put("U", 150.95363);
+        aaMap.put("R", 156.101111);
+        aaMap.put("Y", 163.06333);
         aaMap.put("W", 186.079313);
-        aaMap.put("Y", 163.06332);
-        aaMap.put("V", 99.068414);
         aaMap.put("J", 113.084064);     //ambiguity code for I or L
 
         // make reverse aa map

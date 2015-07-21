@@ -19,7 +19,7 @@ import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 public class SpectrumTags {
 
     private final MgfReader mgfRd;
-    private final static double parts = 50;
+    private final static double parts = 5;
     private final static double million = 1000000;
     private final static double ppmError = parts / million;  //initialising as follows doesn't work? ppmError = 3/100000
 

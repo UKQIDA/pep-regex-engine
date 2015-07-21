@@ -19,31 +19,31 @@ public class PepRegexEngine {
 
     public static void main(String[] args) {
         try {
-//            String fastaFile = args[0];
-//            String mgfFile = args[1];
-//            String resOutput = args[2];
-//            String resFullOutput = args[3];
-//
-//            System.out.println("Start run with the params: " + args[0] + ", " + args[1] + ", " + args[2] + ", " + args[3]);
-            String folderName = "D:\\Users\\ddq\\Dropbox\\TopDownData_from_SamPayne\\";
-            String fastaFile = folderName + "3177.fasta";
-            String mgfFile = folderName + "3177.mgf";
-            String resOutput = folderName + "3177";
-            String resFullOutput = resOutput;
+            String fastaFile = args[0];
+            String mgfFile = args[1];
+            String resOutput = args[2];
+            String resFullOutput = args[3];
+
+            System.out.println("Start run with the params: " + args[0] + ", " + args[1] + ", " + args[2] + ", " + args[3]);
+//            String folderName = "D:\\Users\\ddq\\Dropbox\\TopDownData_from_SamPayne\\";
+//            String fastaFile = folderName + "3177.fasta";
+//            String mgfFile = folderName + "3177.mgf";
+//            String resOutput = folderName + "3177";
+//            String resFullOutput = resOutput;
 
               /*
                * Write out the AA table and Regex table (max triplet) for reference. Only run once
                */            
-//            FileWriter writer = new FileWriter("aaTable.csv");
-//            writer.write("mz, regex\n");
-//
-//            TDoubleIterator iRegex = AAMap.getRegexAAMapRev().keySet().iterator();
-//            while (iRegex.hasNext()) {
-//                double mz = iRegex.next();
-//                writer.write(mz + ", " + AAMap.getRegexAAMapRev().get(mz) + "\n");
-//            }
-//
-//            writer.close();
+            FileWriter writer = new FileWriter("aaTable.csv");
+            writer.write("mz, regex\n");
+
+            TDoubleIterator iRegex = AAMap.getRegexAAMapRev().keySet().iterator();
+            while (iRegex.hasNext()) {
+                double mz = iRegex.next();
+                writer.write(mz + ", " + AAMap.getRegexAAMapRev().get(mz) + "\n");
+            }
+
+            writer.close();
 
             FastaReader fastaRd = new FastaReader(new File(fastaFile));
             MgfReader mgfRd = new MgfReader(new File(mgfFile));
