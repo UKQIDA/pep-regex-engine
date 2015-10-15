@@ -1,0 +1,19 @@
+
+package uk.ac.liv.pepregexengine.command;
+
+/**
+ *
+ * @author Da Qi
+ * @institute University of Liverpool
+ * @time 31-Jul-2015 16:16:30
+ */
+public class CliConstants {
+
+    public static final String HELP_DESCRIPTION = "print help message.";
+    public static final String FASTA_DESCRIPTION = "use fasta file as protein database.";
+    public static final String MGF_DESCRIPTION = "use mgf file as the peak list.";
+    public static final String RES_DESCRIPTION = "output result file.";
+    public static final String RES_FULL_DESCRIPTION = "output full result file.";
+    public static final String FILTER_DESCRIPTION = "use this number to get the most intensed peak in the list.";
+    public static final String TAG_FILE_DESCRIPTION = "specify the tag output file.";
+}
