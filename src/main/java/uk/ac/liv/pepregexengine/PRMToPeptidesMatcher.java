@@ -1,6 +1,7 @@
 
 package uk.ac.liv.pepregexengine;
 
+import uk.ac.liv.pepregexengine.data.Constants;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -36,8 +37,16 @@ public class PRMToPeptidesMatcher {
     // Temperate method for outputting the results
     public void writeResults(String resFileName, String resFullFileName)
             throws IOException {
-        writerRes = new FileWriter(resFileName + "_results.csv");
-        writerFullRes = new FileWriter(resFullFileName + "_results_full.csv");
+        if (!resFileName.endsWith(".csv")) {
+            resFileName = resFileName.concat(".csv");
+        }
+
+        if (!resFullFileName.endsWith(".csv")) {
+            resFullFileName = resFullFileName.concat("_full.csv");
+        }
+
+        writerRes = new FileWriter(resFileName);
+        writerFullRes = new FileWriter(resFullFileName);
 
         writerFullRes.write("SpectrumID,ProtAcc,peptide,TAG,Prefix,PrefixDelta,Suffix,SuffixDelta\n");
         writerRes.write("Spectrum,ProtAcc,Seq,Score,MostCommonPrefixMass,CountPrefixMass,MostCommonSuffixMass,CountSuffixMass\n");

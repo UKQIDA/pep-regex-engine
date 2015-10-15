@@ -1,14 +1,11 @@
 
 package uk.ac.liv.pepregexengine;
 
+import uk.ac.liv.pepregexengine.data.Constants;
 import gnu.trove.list.TDoubleList;
-import gnu.trove.list.array.TDoubleArrayList;
-import gnu.trove.map.TDoubleDoubleMap;
-import gnu.trove.map.hash.TDoubleDoubleHashMap;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,7 +17,8 @@ import java.util.logging.Logger;
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.ebi.pride.tools.mgf_parser.MgfFile;
 import uk.ac.ebi.pride.tools.mgf_parser.model.Ms2Query;
-import uk.ac.liv.pepregexengine.utils.TDoubleDoubleMapConverter;
+import uk.ac.liv.pepregexengine.data.PRMPeak;
+import uk.ac.liv.pepregexengine.data.PRMSpectrum;
 
 /**
  *
@@ -30,7 +28,8 @@ import uk.ac.liv.pepregexengine.utils.TDoubleDoubleMapConverter;
  */
 public class MgfReader {
 
-    private TDoubleList prmSpectrum;
+    private List<PRMPeak> prmPeaks;
+    private TDoubleList spectrum;
     private Map<String, List<Object[]>> prmSpectrumTagsMap;
 
     /**
@@ -81,8 +80,23 @@ public class MgfReader {
             if (query.getPeakList() != null) {
                 int z = query.getPrecursorCharge();
                 double pepMass = (query.getPrecursorMZ() * z) - (z * Constants.PROTON_MASS);
-                prmSpectrum = createPRMSpectrum(query);
-                List<Object[]> spectrumTags = SpectrumTags.generateTags(query.getTitle(), prmSpectrum, pepMass);
+                //TODO: testing parameter
+                PRMSpectrum prmSpectrum = new PRMSpectrum(query, 15);
+               
+                PRMSpectrum testSpectrum = new PRMSpectrum(query);
+                
+                prmPeaks = testSpectrum.getPrmPeaks();
+//                
+//                try {
+//                    //testSpectrum.writeDetail("3177-PRM-spectrum.csv");
+//                    testSpectrum.writeDetail("3177-b-ion-simulation-PRM-spectrum.csv");
+//                }
+//                catch (IOException ex) {
+//                    Logger.getLogger(MgfReader.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+
+                //System.out.println(prmSpectrum);
+                List<Object[]> spectrumTags = SpectrumTags.generateTags(query.getTitle(), prmPeaks, pepMass);
                 //System.out.println("Generated tags for: " + query.getTitle() + " size:" + spectrumTags.size());
                 prmSpectrumTagsMap.put(query.getTitle(), spectrumTags);
             }
@@ -95,10 +109,10 @@ public class MgfReader {
     /*
      * Write out the prmSpectrumTagsMap
      */
-    public void write(String filename) {
+    public void writePRMSpectruTags(String filename) {
 
         try (FileWriter writer = new FileWriter(filename)) {
-            writer.write("Spectrum title, tag, prifex mass, suffix mass\n");
+            writer.write("Spectrum title, tag, prefix mass, suffix mass\n");
             for (String title : prmSpectrumTagsMap.keySet()) {
                 List<Object[]> tagList = prmSpectrumTagsMap.get(title);
                 for (Object[] tag : tagList) {
@@ -109,75 +123,6 @@ public class MgfReader {
         catch (IOException ex) {
             Logger.getLogger(MgfReader.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    /*
-     * Following MS-Align+ method we create the PRM spectrum
-     * Currently set to work at 2dp - we might want to use something more complicated to check for same peak at 2dp, then use higher resolution for most intense peak
-     */
-    private TDoubleList createPRMSpectrum(Ms2Query query) {
-
-        int z = query.getPrecursorCharge();
-        double pepMass = (query.getPrecursorMZ() * z) - (z * Constants.PROTON_MASS);
-        //String title = query.getTitle();
-
-        //System.out.println("Spectrum " + title + " mz: " + pepMZ + " mass: " + pepMass);
-        // + CTERM + HMASS;
-        TDoubleList newSpectrum = new TDoubleArrayList();
-
-        //TDoubleDoubleMap massToIntensity4dp = new TDoubleDoubleHashMap();     //This will form the spectrum
-        TDoubleDoubleMap massToIntensity2dp = new TDoubleDoubleHashMap();     //This is for checking if we have duplication - use the mass at 4dp with higher intensity, add intensity
-
-        TDoubleDoubleMap peakList = TDoubleDoubleMapConverter.convert(query.getPeakList()); // Convert Map<Double, Double> to TDoubleDoubleMap
-        DecimalFormat df4dp = new DecimalFormat("#.####");
-        DecimalFormat df2dp = new DecimalFormat("#.##");
-
-        massToIntensity2dp.put(Double.parseDouble(df2dp.format(0.0)), 50.0); //origin 0.0
-        massToIntensity2dp.put(Double.parseDouble(df2dp.format(Constants.CTERM + Constants.HYDROGEN_MASS)), 50.0); //origin C term group needed for finding y ion series
-        massToIntensity2dp.put(Double.parseDouble(df2dp.format(pepMass)), 50.0); //origin C term group needed for finding y ion series
-
-        //Todo: check the following to FOR statements. What if pepMass=2500, mz=1250, then the intensity at 1250 will be double counted? 
-        //Todo: It seems that the intensity will not be used in the output result.
-        //first test for duplicate peaks, and include higher intensity ones
-        //the mass in the peaklist is charge deconvoluted mass
-        for (double mz : peakList.keys()) {
-
-            double formatMass2dp = Double.parseDouble(df2dp.format(mz - Constants.PROTON_MASS));
-            double intensity = Double.parseDouble(df2dp.format(peakList.get(mz)));
-
-            if (massToIntensity2dp.containsKey(formatMass2dp)) {
-                intensity += massToIntensity2dp.get(formatMass2dp);
-            }
-            massToIntensity2dp.put(formatMass2dp, intensity);
-        }
-
-        //Now get the inverse mzs and check we are not duplicating
-        for (double mz : peakList.keys()) {
-
-            double inverseMass2dp = Double.parseDouble(df2dp.format(pepMass - (mz - Constants.PROTON_MASS)));
-            double intensity = Double.parseDouble(df2dp.format(peakList.get(mz)));
-
-            if (massToIntensity2dp.containsKey(inverseMass2dp)) {
-                intensity += massToIntensity2dp.get(inverseMass2dp);
-            }
-            massToIntensity2dp.put(inverseMass2dp, intensity);
-        }
-
-        for (double mass : massToIntensity2dp.keys()) {
-            //newSpectrum.add(mz);
-            newSpectrum.add(mass); //Change to make this a mass spectrum rather than MH+ spectrum
-        }
-
-        newSpectrum.sort();
-
-        /*
-         * If we want to print out the PRM spectrum
-         *
-         * for(Double mass: newSpectrum){
-         * System.out.println(mass + " " + massToIntensity2dp.get(mass));
-         * }
-         */
-        return newSpectrum;
     }
 
 }

@@ -31,8 +31,7 @@ public class FastaReader {
     private Map<String, String[]> accToPeptides = new HashMap<>();
 
     //TODO: the variables that can be made as user input parameters.
-    //TODO: make an independant enzyme rule class to deal with different digested enzyme?
-    private String enzymeRegex = "(?<=[KR])(?!P)"; //Trypsin default
+    //private String enzymeRegex = "(?<=[KR])(?!P)"; //Trypsin default
     private int missedCleavages = 2;
 
     private Map<String, List<String>> peptideToAccs = new HashMap<>();
@@ -100,7 +99,7 @@ public class FastaReader {
                     currSequence = currSequence.replaceAll(" ", "");
                     allProteinIDs.add(currProtAcc);
 
-                    String[] peptides = currSequence.split(enzymeRegex);
+                    String[] peptides = currSequence.split("");
                     addPeptidesToMap(currProtAcc, peptides);
 
                     accToSeq.put(currProtAcc, currSequence);
@@ -134,7 +133,7 @@ public class FastaReader {
         accToSeq.put(currProtAcc, currSequence);
         accToDefLine.put(currProtAcc, currDefline);
 
-        String[] peptides = currSequence.split(enzymeRegex);
+        String[] peptides = currSequence.split("");
         addPeptidesToMap(currProtAcc, peptides);
         //System.out.println("Put last:" + currProtAcc + " seq: " + currSequence);
         allProteinIDs.add(currProtAcc);

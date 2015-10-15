@@ -7,7 +7,12 @@ import gnu.trove.map.TDoubleObjectMap;
 import gnu.trove.map.TObjectDoubleMap;
 import gnu.trove.map.hash.TDoubleObjectHashMap;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
+import gnu.trove.procedure.TDoubleProcedure;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -22,7 +27,7 @@ public class AAMap {
     private static final TDoubleObjectMap<String> regexAAMapRev = new TDoubleObjectHashMap<>();
     private static final TDoubleList aaMasses = new TDoubleArrayList();
     private static final TDoubleList regexAAMasses = new TDoubleArrayList();
-    private static final DecimalFormat df = new DecimalFormat("#.####");
+    private static final DecimalFormat df = new DecimalFormat("#.##");
 
     // Class initialisation
     static {
@@ -33,8 +38,8 @@ public class AAMap {
         aaMap.put("V", 99.068414);
         aaMap.put("T", 101.047679);
         aaMap.put("C", 103.009185);
-        aaMap.put("I", 113.084064);
-        aaMap.put("L", 113.084064);
+//        aaMap.put("I", 113.084064);
+//        aaMap.put("L", 113.084064);
         aaMap.put("N", 114.042927);
         aaMap.put("D", 115.026943);
         aaMap.put("Q", 128.058578);
@@ -50,7 +55,7 @@ public class AAMap {
 
         // make reverse aa map
         for (String aa : aaMap.keySet()) {
-            double mz = aaMap.get(aa);
+            double mz = Double.parseDouble(df.format(aaMap.get(aa)));
             aaMapRev.put(mz, aa);
         }
 
@@ -59,8 +64,8 @@ public class AAMap {
             aaMasses.add(mz);
         }
 
-        for (int i = 0; i < aaMasses.size(); i++) {
-            double firstMass = aaMasses.get(i);
+        for (double firstMass : aaMasses.toArray()) {
+            //double firstMass = aaMasses.get(i);
 
             String firstRes = aaMapRev.get(firstMass);
 
@@ -72,8 +77,8 @@ public class AAMap {
                 regexAAMapRev.put(firstMass, firstRes); //regexAAMapRev includes single amino acid residue
             }
 
-            for (int j = 0; j < aaMasses.size(); j++) {
-                double secondMass = aaMasses.get(j);
+            for (double secondMass : aaMasses.toArray()) {
+                //double secondMass = aaMasses.get(j);
                 String secondRes = aaMapRev.get(secondMass);
 
                 double pairedMass = Double.parseDouble(df.format(firstMass + secondMass));
@@ -86,8 +91,8 @@ public class AAMap {
                     regexAAMapRev.put(pairedMass, paired);
                 }
 
-                for (int k = 0; k < aaMasses.size(); k++) {
-                    double thirdMass = aaMasses.get(k);
+                for (double thirdMass : aaMasses.toArray()) {
+                    //double thirdMass = aaMasses.get(k);
                     String thirdRes = aaMapRev.get(thirdMass);
 
                     String triplet = firstRes + secondRes + thirdRes;
@@ -105,6 +110,7 @@ public class AAMap {
 
         }
 
+        //System.out.println(regexAAMapRev.toString());
         // make regexAAMasses
         for (double mz : regexAAMapRev.keys()) {
             regexAAMasses.add(mz);
@@ -154,6 +160,34 @@ public class AAMap {
      */
     public static DecimalFormat getDf() {
         return df;
+    }
+
+    public static void writeRegexAAMap(String fileName) {
+        try {
+            try (FileWriter writer = new FileWriter(fileName)) {
+                writer.write("Mass, Tag\n");
+//            for (double mass : regexAAMapRev.keys()) {
+//                writer.write(String.valueOf(mass) + ", " + regexAAMapRev.get(mass) + "\n");
+//            }
+                regexAAMapRev.forEachKey(new TDoubleProcedure() {
+
+                    @Override
+                    public boolean execute(double value) {
+                        try {
+                            writer.write(String.valueOf(value) + ", " + regexAAMapRev.get(value) + "\n");
+                        }
+                        catch (IOException ex) {
+                            Logger.getLogger(AAMap.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        return true;
+                    }
+
+                });
+            }
+        }
+        catch (IOException ex) {
+            Logger.getLogger(AAMap.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }
