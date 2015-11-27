@@ -1,5 +1,5 @@
 
-package uk.ac.liv.pepregexengine.data;
+package uk.ac.liv.pepregexengine.data.constants;
 
 import java.text.DecimalFormat;
 
@@ -21,6 +21,7 @@ public class Constants {
     public static final int MIN_TAG_LENGTH_FOR_SEARCH = 2;
     public static final double MIN_SCORE_THRESHOLD = 5.0;
     public static final double TAG_MATCH_ERROR = 0.03;
-    
-    public static final DecimalFormat Two_Decimal_Place = new DecimalFormat("#.##");
+
+    public static final String DALTON = "Da";
+    public static final String PPM = "ppm";
 }

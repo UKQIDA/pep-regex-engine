@@ -1,7 +1,8 @@
 
 package uk.ac.liv.pepregexengine;
 
-import uk.ac.liv.pepregexengine.data.Constants;
+import uk.ac.liv.pepregexengine.mgfreader.MgfReader;
+import uk.ac.liv.pepregexengine.data.constants.Constants;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;

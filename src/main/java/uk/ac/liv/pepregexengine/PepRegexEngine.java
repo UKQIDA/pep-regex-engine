@@ -1,8 +1,10 @@
 
 package uk.ac.liv.pepregexengine;
 
+import uk.ac.liv.pepregexengine.mgfreader.MgfReader;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
@@ -12,9 +14,11 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.math.NumberUtils;
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.liv.pepregexengine.command.CliConstants;
-import uk.ac.liv.pepregexengine.utils.BIonGenerator;
+import uk.ac.liv.pepregexengine.data.constants.Constants;
+import uk.ac.liv.pepregexengine.data.tolerance.MassTolerance;
 
 /**
  *
@@ -48,7 +52,7 @@ public class PepRegexEngine {
                 .hasArg()
                 .argName("file")
                 .longOpt(fastaOpt)
-                .required(true)
+                //                .required(false)    //TODO: fasta is not require for testing. If fasta file is not provided, the database searching will not be performed.
                 .desc(CliConstants.FASTA_DESCRIPTION)
                 .build());
 
@@ -57,8 +61,31 @@ public class PepRegexEngine {
                 .hasArg()
                 .argName("file")
                 .longOpt(mgfOpt)
-                .required(true)
+                //                .required(false)
                 .desc(CliConstants.MGF_DESCRIPTION)
+                .build());
+
+        String massTolOpt = "mass-tolerance";
+        options.addOption(Option.builder("mt")
+                .hasArg()
+                .argName("mass tolerance")
+                .longOpt(massTolOpt)
+                .desc(CliConstants.MASS_TOLERANCE_DESCRIPTION)
+                .build());
+
+        String massUnitOpt = "mass-unit";
+        options.addOption(Option.builder("mu")
+                .hasArg()
+                .argName("mass unit")
+                .longOpt(massUnitOpt)
+                .desc(CliConstants.MASS_UNIT_DESCRIPTION)
+                .build());
+
+        String dfOpt = "decimal-place";
+        options.addOption(Option.builder("dp")
+                .hasArg()
+                .argName("decimal place")
+                .longOpt(dfOpt)
                 .build());
 
         String resOpt = "result-file";
@@ -66,7 +93,7 @@ public class PepRegexEngine {
                 .hasArg()
                 .argName("file")
                 .longOpt(resOpt)
-                .required(true)
+                //                .required(false)
                 .desc(CliConstants.RES_DESCRIPTION)
                 .build());
 
@@ -76,7 +103,7 @@ public class PepRegexEngine {
                 .argName("file")
                 .longOpt(resFullOpt)
                 .desc(CliConstants.RES_FULL_DESCRIPTION)
-                .required(true)
+                //                .required(false)
                 .build());
 
         String tagOpt = "output-tag-file";
@@ -125,23 +152,23 @@ public class PepRegexEngine {
 //            args[8] = "-t";
 //            args[9] = "Y:/ddq/TopDownData_from_SamPayne/PepRegexEngine-Test/3177/b ion simulation/3177-b_ion_SpectrumTagTable_debug.csv";
             //PXD001845 data
-            args = new String[10];
-            args[0] = "-f";
-            args[1] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/fasta/PXD001845.fasta";
-            args[2] = "-m";
-            //mgf from Xtract output
-            //args[3] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/Xtract/20141202_AMB_Bora_10x_40MeOH_1FA_OT_120k_10uscans_920_ETD_8ms_19precZ-Xtract.mgf";
-            //mgf from DeconTools
-            //args[3] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/DeconTools/20141202_AMB_Bora_10x_40MeOH_1FA_OT_120k_10uscans_920_ETD_8ms_19precZ.mgf";
-            //mgf from MsDeconv
-            args[3] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/MsDeconv-mzXML_with_precursor_charge/20141202_AMB_Bora_10x_40MeOH_1FA_OT_120k_10uscans_920_ETD_8ms_19precZ_msdeconv.mgf";
-            args[4] = "-o";
-            args[5] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/TagGeneration/20141202_AMB_Bora_10x_40MeOH_1FA_OT_120k_10uscans_920_ETD_8ms_19precZ_results_debug.csv";
-            args[6] = "-u";
-            args[7] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/TagGeneration/20141202_AMB_Bora_10x_40MeOH_1FA_OT_120k_10uscans_920_ETD_8ms_19precZ_results_full.debug.csv";
-            args[8] = "-t";
-            args[9] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/TagGeneration/20141202_AMB_Bora_10x_40MeOH_1FA_OT_120k_10uscans_920_ETD_8ms_19precZ_SpectrumTagTable_debug.csv";
-
+//            args = new String[10];
+//            args[0] = "-f";
+//            args[1] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/fasta/PXD001845.fasta";
+//            args[2] = "-m";
+//            //mgf from Xtract output
+//            //args[3] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/Xtract/20141202_AMB_Bora_10x_40MeOH_1FA_OT_120k_10uscans_920_ETD_8ms_19precZ-Xtract.mgf";
+//            //mgf from DeconTools
+//            //args[3] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/DeconTools/20141202_AMB_Bora_10x_40MeOH_1FA_OT_120k_10uscans_920_ETD_8ms_19precZ.mgf";
+//            //mgf from MsDeconv
+//            args[3] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/MsDeconv-mzXML_with_precursor_charge/20141202_AMB_Bora_10x_40MeOH_1FA_OT_120k_10uscans_920_ETD_8ms_19precZ_msdeconv.mgf";
+//            args[4] = "-o";
+//            args[5] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/TagGeneration/20141202_AMB_Bora_10x_40MeOH_1FA_OT_120k_10uscans_920_ETD_8ms_19precZ_results_debug.csv";
+//            args[6] = "-u";
+//            args[7] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/TagGeneration/20141202_AMB_Bora_10x_40MeOH_1FA_OT_120k_10uscans_920_ETD_8ms_19precZ_results_full.debug.csv";
+//            args[8] = "-t";
+//            args[9] = "Y:/ddq/TopDownData_Proteomexchange/PXD001845/TagGeneration/20141202_AMB_Bora_10x_40MeOH_1FA_OT_120k_10uscans_920_ETD_8ms_19precZ_SpectrumTagTable_debug.csv";
+            //Matthias data
             // parse command line
             CommandLine line = parser.parse(options, args);
 
@@ -155,14 +182,49 @@ public class PepRegexEngine {
                 String mgfFile = line.getOptionValue("m");
                 String resOutput = line.getOptionValue("o");
                 String resFullOutput = line.getOptionValue("u");
+                String massTol = line.getOptionValue("mt");
+                String massUnit = line.getOptionValue("mu");
+                String decPlace = line.getOptionValue("dp");
+
+                if (mgfFile == null) {
+                    throw new IllegalArgumentException("No input MGF file argument!");
+                }
+                if (resOutput == null) {
+                    throw new IllegalArgumentException("No output file argument!");
+                }
+                if (resFullOutput == null) {
+                    throw new IllegalArgumentException("No full output file argument!");
+                }
                 int filterNumber = 0;
                 if (line.hasOption("pf")) {
                     filterNumber = Integer.parseInt(line.getOptionValue("pf"));
                 };
 
-                System.out.println("Start run with the params: " + fastaFile + ", " + mgfFile + ", " + resOutput + ", " + resFullOutput + ", " + filterNumber);
+                MassTolerance mt = new MassTolerance();
+                if (massTol == null || massUnit == null) {
+                    mt.setDelta(0.01);
+                    mt.setUnit(Constants.DALTON);
+                }
+                else if (!NumberUtils.isNumber(massTol) || !massUnit.equalsIgnoreCase(Constants.DALTON) && !massUnit.equalsIgnoreCase(Constants.PPM)) {
+                    throw new IllegalArgumentException("Mass tolerance setting is wrong.");
+                }
+                else {
+                    mt.setDelta(Double.parseDouble(massTol));
+                    mt.setUnit(massUnit);
+                }
+                System.out.println("Start run with the params: fasta file: " + fastaFile + ", mgf file: " + mgfFile + ", result file: " + resOutput
+                        + ", full result file: " + resFullOutput + ", peak filter number: " + filterNumber + ", " + mt.toString());
 
-                FastaReader fastaRd = new FastaReader(new File(fastaFile));
+                String dfString = "#.##";
+                if (decPlace != null && NumberUtils.isNumber(decPlace)) {
+                    int m = Integer.parseInt(decPlace);
+                    dfString = "#.";
+                    for (int i = 0; i < m; i++) {
+                        dfString += "#";
+                    }
+                }
+                DecimalFormat df = new DecimalFormat(dfString);
+                
                 MgfReader mgfRd = new MgfReader(new File(mgfFile));
 
                 //output Tag generation result
@@ -174,10 +236,13 @@ public class PepRegexEngine {
                     else {
                         tagFile = line.getOptionValue("t");
                     }
-                    mgfRd.writePRMSpectruTags(tagFile);
+                    mgfRd.writePRMSpectruTags(tagFile, mt, df);
                 }
-                PRMToPeptidesMatcher ppMatcher = new PRMToPeptidesMatcher(fastaRd, mgfRd);
-                ppMatcher.writeResults(resOutput, resFullOutput);
+                if (fastaFile != null) {
+                    FastaReader fastaRd = new FastaReader(new File(fastaFile));
+                    PRMToPeptidesMatcher ppMatcher = new PRMToPeptidesMatcher(fastaRd, mgfRd);
+                    ppMatcher.writeResults(resOutput, resFullOutput);
+                }
             }
         }
         catch (IOException ex) {

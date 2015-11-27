@@ -5,7 +5,6 @@ import gnu.trove.map.TDoubleDoubleMap;
 import gnu.trove.map.hash.TDoubleDoubleHashMap;
 import gnu.trove.procedure.TDoubleDoubleProcedure;
 import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  *
@@ -25,9 +24,9 @@ public class TDoubleDoubleMapConverter {
     public static TDoubleDoubleMap convert(Map<Double, Double> inputMap) {
         TDoubleDoubleMap tMap = new TDoubleDoubleHashMap();
         if (inputMap != null) {
-            for (Entry<Double, Double> entry : inputMap.entrySet()) {
+            inputMap.entrySet().stream().forEach((entry) -> {
                 tMap.put(entry.getKey(), entry.getValue());
-            }
+            });
         }
         return tMap;
     }

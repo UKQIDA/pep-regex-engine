@@ -4,7 +4,7 @@ package uk.ac.liv.pepregexengine.utils;
 import java.util.ArrayList;
 import java.util.List;
 import uk.ac.liv.pepregexengine.AAMap;
-import uk.ac.liv.pepregexengine.data.Constants;
+import uk.ac.liv.pepregexengine.data.constants.Constants;
 import uk.ac.liv.pepregexengine.data.Ion;
 import uk.ac.liv.pepregexengine.data.Ion.IonType;
 

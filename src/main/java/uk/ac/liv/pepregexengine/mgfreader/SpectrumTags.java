@@ -1,17 +1,21 @@
 
-package uk.ac.liv.pepregexengine;
+package uk.ac.liv.pepregexengine.mgfreader;
 
 import gnu.trove.map.TDoubleObjectMap;
 import gnu.trove.map.hash.TDoubleObjectHashMap;
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
-import uk.ac.liv.pepregexengine.data.Constants;
+import uk.ac.liv.pepregexengine.AAMap;
+import uk.ac.liv.pepregexengine.data.constants.Constants;
 import uk.ac.liv.pepregexengine.data.PRMPeak;
 import uk.ac.liv.pepregexengine.data.PRMSpectrum;
+import uk.ac.liv.pepregexengine.data.tolerance.MassTolerance;
+import uk.ac.liv.pepregexengine.data.tolerance.MassToleranceWindow;
 
 /**
  *
@@ -31,13 +35,27 @@ public class SpectrumTags {
     }
 
     public SpectrumTags(File spectrumFile)
-            throws JMzReaderException {
+            throws JMzReaderException, IOException {
         this.mgfRd = new MgfReader(spectrumFile);
     }
 
+    /**
+     * Generate a list of tag from input spectrum data.
+     * The input file MUST be MGF format. The composition of each tag is {tag, prefixMass, suffixMass}.
+     *
+     * @param specTitle the title of single spectrum entry in mgf file.
+     * @param spectrum  the spectrum consists a list of PRMPeak.
+     * @param pepMass   the mono-isotopic neutral(TODO:?) mass of parent ion.
+     * @param mt        the mass tolerance setting.
+     * @param df
+     *
+     * @return list of tag.
+     */
     public static List<Object[]> generateTags(String specTitle,
                                               List<PRMPeak> spectrum,
-                                              double pepMass) {
+                                              double pepMass,
+                                              MassTolerance mt,
+                                              DecimalFormat df) { //default is 2 dp
 
         List<Object[]> spectrumTags = new ArrayList<>();
         double biggestMass = AAMap.getAaMasses().max() + 0.5;
@@ -57,7 +75,6 @@ public class SpectrumTags {
          * 2. If new start position is a current end position, create new chain with paired values
          *
          */
-        DecimalFormat df = new DecimalFormat("#.##"); //format to 2dp
 
         //make sure the spectrum is in mass ascending order
         Collections.sort(spectrum, PRMSpectrum.MASS_ASCENDING);
@@ -79,10 +96,11 @@ public class SpectrumTags {
 
                     //due to 2 decimal place in AAMap we are using, the allowed error range should be wider
                     //for example, when delta=113.09, it should be mapped to I/L 113.08
-                    double topRange = delta + 0.01;
-                    double bottomRange = delta - 0.01;
-                    //System.out.print("\t\tppm: " + ppmError + " Delta: " + delta + " bottom: " + bottomRange + " top: " + topRange+"\n");
+                    MassToleranceWindow mtWin = new MassToleranceWindow(delta, mt);
+                    double topRange = Double.parseDouble(df.format(mtWin.getRight()));
+                    double bottomRange = Double.parseDouble(df.format(mtWin.getLeft()));
 
+                    //System.out.print("\t\tppm: " + ppmError + " Delta: " + delta + " bottom: " + bottomRange + " top: " + topRange+"\n");
                     for (double aa : AAMap.getAaMasses().toArray()) {
                        // double aa = AAMap.getAaMasses().get(k);
                         //System.out.print("\t\t\t" + aa);
@@ -100,7 +118,6 @@ public class SpectrumTags {
                             //System.out.println("outter position: " + i + ", outter mass: " + outerMass
                             //        + "; inner position: " + j + ", inner mass: " + innerMass + "; residue: " + foundAAString + ".");
                             // String resLine = foundAA + "," + outerMass + "," + innerMass + "," + delta + "," + error + "," + suffix;
-
                             if (endPosToTag.containsKey(outerMass)) {
                                 String currTag = endPosToTag.get(outerMass) + foundAAString;    //Add to chain
                                 endPosToTag.put(innerMass, currTag);
@@ -185,7 +202,6 @@ public class SpectrumTags {
                                 //TODO: helping output will be removed 
                                 //System.out.println("outter position: " + i + ", outter mass: " + outerMass
                                 //        + "; inner position: " + j + ", inner mass: " + innerMass + "; residue: " + foundAA + ".");
-
                                 if (endPosToTag.containsKey(outerMass)) {
                                     String currTag = endPosToTag.get(outerMass) + foundAA;    //Add to chain
                                     endPosToTag.put(innerMass, currTag);
@@ -224,7 +240,6 @@ public class SpectrumTags {
                                 //TODO: helping output will be removed 
                                 //System.out.println("outter position: " + i + ", outter mass: " + outerMass
                                 //        + "; inner position: " + j + ", inner mass: " + innerMass + "; residue: " + foundRegex + ".");
-
                                 //TODO: need some code to include other close sequence in the findings, not only the first one found 4/8/2015
                                 k = AAMap.getRegexAAMasses().size(); //set k to jump out of the loop
                                 if (endPosToTag.containsKey(outerMass)) {

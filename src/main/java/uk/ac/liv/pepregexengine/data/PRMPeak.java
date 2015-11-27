@@ -5,7 +5,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
- *
+ * The class represents a single prefix residue mass (PRM) peak.
+ * The attributes of a PRMPeak includes de-charged mass value, intensity value and direction flag.
  * @author Da Qi
  * @institute University of Liverpool
  * @time 10-Aug-2015 14:59:46
@@ -13,8 +14,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 public class PRMPeak {
 
     private double mass; //decharged mass (neutral mass?) //mass from mgf MINUS one proton mass
-    private double intensity; //default is 1.0
-    private int direction; //direction of the peak: forward-0; reverse-1; both-2. default is 0
+    private double intensity; //Default is 1.0
+    private int direction; //direction of the peak: forward-0; reverse-1; both-2. Default is 0
 
     public PRMPeak() {
         this.mass = 0.0;

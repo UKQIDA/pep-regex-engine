@@ -14,6 +14,8 @@ public class CliConstants {
     public static final String MGF_DESCRIPTION = "use mgf file as the peak list.";
     public static final String RES_DESCRIPTION = "output result file.";
     public static final String RES_FULL_DESCRIPTION = "output full result file.";
-    public static final String FILTER_DESCRIPTION = "use this number to get the most intensed peak in the list.";
+    public static final String FILTER_DESCRIPTION = "use this number to get the peaks with highest intensity value in the list.";
     public static final String TAG_FILE_DESCRIPTION = "specify the tag output file.";
+    public static final String MASS_TOLERANCE_DESCRIPTION = "set mass tolerance value.";
+    public static final String MASS_UNIT_DESCRIPTION = "set mass tolerance unit: Da or Unit.";
 }
