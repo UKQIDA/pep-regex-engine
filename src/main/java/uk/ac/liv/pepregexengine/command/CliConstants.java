@@ -18,4 +18,5 @@ public class CliConstants {
     public static final String TAG_FILE_DESCRIPTION = "specify the tag output file.";
     public static final String MASS_TOLERANCE_DESCRIPTION = "set mass tolerance value.";
     public static final String MASS_UNIT_DESCRIPTION = "set mass tolerance unit: Da or Unit.";
+    public static final String GUI_DESCRIPTION = "call the Graphic User Interface window.";
 }

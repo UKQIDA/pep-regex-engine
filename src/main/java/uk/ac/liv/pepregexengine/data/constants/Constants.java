@@ -1,8 +1,6 @@
 
 package uk.ac.liv.pepregexengine.data.constants;
 
-import java.text.DecimalFormat;
-
 /**
  *
  * @author Da Qi

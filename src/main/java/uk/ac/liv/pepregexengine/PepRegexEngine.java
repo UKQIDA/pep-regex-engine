@@ -19,6 +19,7 @@ import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.liv.pepregexengine.command.CliConstants;
 import uk.ac.liv.pepregexengine.data.constants.Constants;
 import uk.ac.liv.pepregexengine.data.tolerance.MassTolerance;
+import uk.ac.liv.pepregexengine.view.MainFrame;
 
 /**
  *
@@ -124,6 +125,13 @@ public class PepRegexEngine {
                 .desc(CliConstants.FILTER_DESCRIPTION)
                 .build());
 
+        String GUIOpt = "gui";
+        options.addOption(Option.builder("g")
+                .longOpt(GUIOpt)
+                .required(false)
+                .desc(CliConstants.GUI_DESCRIPTION)
+                .build());
+
         try {
 //            AAMap.writeRegexAAMap("Y:/ddq/TopDownData_from_SamPayne/PepRegexEngine-Test/AAMap.csv");         
             //real data test arguments (Sam Payne)
@@ -177,6 +185,9 @@ public class PepRegexEngine {
                 HelpFormatter formatter = new HelpFormatter();
                 formatter.printHelp("PepRegexEngine", options);
             }
+            else if (line.hasOption(GUIOpt)) {
+                MainFrame.main(args);
+            }
             else {
                 String fastaFile = line.getOptionValue("f");
                 String mgfFile = line.getOptionValue("m");
@@ -224,7 +235,7 @@ public class PepRegexEngine {
                     }
                 }
                 DecimalFormat df = new DecimalFormat(dfString);
-                
+
                 MgfReader mgfRd = new MgfReader(new File(mgfFile));
 
                 //output Tag generation result
