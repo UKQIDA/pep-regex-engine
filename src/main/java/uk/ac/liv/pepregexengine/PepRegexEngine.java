@@ -183,7 +183,7 @@ public class PepRegexEngine {
             // interrogation stage
             if (line.getOptions().length == 0 || line.hasOption(helpOpt)) {
                 HelpFormatter formatter = new HelpFormatter();
-                formatter.printHelp("PepRegexEngine", options);
+                formatter.printHelp("Proteoformer-TD", options);
             }
             else if (line.hasOption(GUIOpt)) {
                 MainFrame.main(args);

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import uk.ac.liv.pepregexengine.data.tolerance.MassTolerance;
 
 /**
  *
@@ -24,6 +25,9 @@ public class GlobalConfig {
     }
 
     private File mfgFolder;
+    private MassTolerance mt;
+    private int peakFilter;
+    private int dp;
 
     public GlobalConfig() {
         try {
@@ -47,6 +51,48 @@ public class GlobalConfig {
      */
     public void setMfgFolder(File mfgFolder) {
         this.mfgFolder = mfgFolder;
+    }
+
+    /**
+     * @return the mt
+     */
+    public MassTolerance getMt() {
+        return mt;
+    }
+
+    /**
+     * @param mt the mt to set
+     */
+    public void setMt(MassTolerance mt) {
+        this.mt = mt;
+    }
+
+    /**
+     * @return the peakFilter
+     */
+    public int getPeakFilter() {
+        return peakFilter;
+    }
+
+    /**
+     * @param peakFilter the peakFilter to set
+     */
+    public void setPeakFilter(int peakFilter) {
+        this.peakFilter = peakFilter;
+    }
+
+    /**
+     * @return the dp
+     */
+    public int getDp() {
+        return dp;
+    }
+
+    /**
+     * @param dp the dp to set
+     */
+    public void setDp(int dp) {
+        this.dp = dp;
     }
 
 }

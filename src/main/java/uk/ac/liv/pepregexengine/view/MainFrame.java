@@ -3,8 +3,11 @@ package uk.ac.liv.pepregexengine.view;
 
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.JComboBox;
+import javax.swing.JSpinner;
+import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
-import uk.ac.liv.pepregexengine.listener.LoadMgfFileListener;
+import uk.ac.liv.pepregexengine.listener.*;
 
 /**
  *
@@ -12,12 +15,20 @@ import uk.ac.liv.pepregexengine.listener.LoadMgfFileListener;
  */
 public class MainFrame extends javax.swing.JFrame {
 
-    private static Map<String, JTextComponent> componentMap = new HashMap<>();
+    private static Map<String, JTextComponent> textComponentMap = new HashMap<>();
+    private static Map<String, JSpinner> spinnerMap = new HashMap<>();
+    private static Map<String, JComboBox> comboMap = new HashMap<>();
 
     /**
      * Creates new form MainFrame
      */
     public MainFrame() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (Exception e) {
+            System.out.println(e.getStackTrace());
+        }
         initComponents();
     }
 
@@ -30,24 +41,38 @@ public class MainFrame extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
         jPanel1 = new javax.swing.JPanel();
         mgfPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         tfMgfFile = new javax.swing.JTextField();
         btOpen = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
+        fastaPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         btSelect = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        spMassTol = new javax.swing.JSpinner();
+        cbMassUnit = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        spPeakFilter = new javax.swing.JSpinner();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        spDecimal = new javax.swing.JSpinner();
+        jPanel7 = new javax.swing.JPanel();
+        btRun = new javax.swing.JButton();
+        jProgressBar1 = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Peptide Regex Engine");
+        setTitle("Proteoformer-TD");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel1.setLayout(new java.awt.GridLayout(9, 1, 0, 5));
+        jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel1.setLayout(new java.awt.GridLayout(4, 1));
 
-        java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 10);
+        java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout(java.awt.FlowLayout.LEADING, 10, 10);
         flowLayout1.setAlignOnBaseline(true);
         mgfPanel.setLayout(flowLayout1);
 
@@ -57,7 +82,7 @@ public class MainFrame extends javax.swing.JFrame {
         tfMgfFile.setEditable(false);
         tfMgfFile.setPreferredSize(new java.awt.Dimension(350, 25));
         mgfPanel.add(tfMgfFile);
-        componentMap.put("tfMgfFile", tfMgfFile);
+        textComponentMap.put("tfMgfFile", tfMgfFile);
 
         btOpen.setText("Open");
         mgfPanel.add(btOpen);
@@ -67,19 +92,79 @@ public class MainFrame extends javax.swing.JFrame {
 
         java.awt.FlowLayout flowLayout2 = new java.awt.FlowLayout(java.awt.FlowLayout.LEADING, 10, 10);
         flowLayout2.setAlignOnBaseline(true);
-        jPanel2.setLayout(flowLayout2);
+        fastaPanel.setLayout(flowLayout2);
 
         jLabel2.setText("FASTA File:");
-        jPanel2.add(jLabel2);
+        fastaPanel.add(jLabel2);
 
         jTextField1.setEditable(false);
         jTextField1.setPreferredSize(new java.awt.Dimension(340, 25));
-        jPanel2.add(jTextField1);
+        fastaPanel.add(jTextField1);
 
         btSelect.setText("Select");
-        jPanel2.add(btSelect);
+        fastaPanel.add(btSelect);
+
+        jPanel1.add(fastaPanel);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Settings:"));
+        java.awt.FlowLayout flowLayout3 = new java.awt.FlowLayout(java.awt.FlowLayout.LEADING, 10, 10);
+        flowLayout3.setAlignOnBaseline(true);
+        jPanel2.setLayout(flowLayout3);
+
+        jLabel3.setText("Mass tol: ");
+        jPanel2.add(jLabel3);
+
+        spMassTol.setModel(new javax.swing.SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(0.01d)));
+        spMassTol.setPreferredSize(new java.awt.Dimension(50, 20));
+        jPanel2.add(spMassTol);
+        spinnerMap.put("spMassTol",spMassTol);
+
+        spMassTol.addChangeListener(new MassTolListener());
+
+        cbMassUnit.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Da", "ppm" }));
+        jPanel2.add(cbMassUnit);
+        cbMassUnit.addActionListener(new MassUnitListener());
+
+        comboMap.put("cbMassUnit", cbMassUnit);
+
+        jLabel4.setPreferredSize(new java.awt.Dimension(50, 14));
+        jPanel2.add(jLabel4);
+
+        jLabel5.setText("Peak filter:");
+        jPanel2.add(jLabel5);
+
+        spPeakFilter.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(5), Integer.valueOf(5), null, Integer.valueOf(1)));
+        spPeakFilter.setToolTipText("Use this to set the number of highest intense peaks from one scan to be taken into account for the search.");
+        spPeakFilter.setMinimumSize(new java.awt.Dimension(45, 20));
+        jPanel2.add(spPeakFilter);
+        spinnerMap.put("spPeakFilter", spPeakFilter);
+
+        spPeakFilter.addChangeListener(new PeakFilterListener());
+
+        jLabel6.setPreferredSize(new java.awt.Dimension(45, 14));
+        jPanel2.add(jLabel6);
+
+        jLabel7.setText("Decimal:");
+        jPanel2.add(jLabel7);
+
+        spDecimal.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
+        jPanel2.add(spDecimal);
+        spinnerMap.put("spDecimal", spDecimal);
+
+        spDecimal.addChangeListener(new DecimalListener());
 
         jPanel1.add(jPanel2);
+
+        jPanel7.setLayout(new java.awt.BorderLayout());
+
+        btRun.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btRun.setForeground(new java.awt.Color(51, 0, 153));
+        btRun.setText("RUN");
+        jPanel7.add(btRun, java.awt.BorderLayout.CENTER);
+        btRun.addActionListener(new RunSearchListener());
+        jPanel7.add(jProgressBar1, java.awt.BorderLayout.PAGE_END);
+
+        jPanel1.add(jPanel7);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
@@ -132,9 +217,27 @@ public class MainFrame extends javax.swing.JFrame {
         });
     }
 
-    public static JTextComponent getComponentByName(String name) {
-        if (componentMap.containsKey(name)) {
-            return (JTextComponent) componentMap.get(name);
+    public static JTextComponent getTextComponentByName(String name) {
+        if (textComponentMap.containsKey(name)) {
+            return textComponentMap.get(name);
+        }
+        else {
+            return null;
+        }
+    }
+
+    public static JSpinner getSpinnerByName(String name) {
+        if (spinnerMap.containsKey(name)) {
+            return spinnerMap.get(name);
+        }
+        else {
+            return null;
+        }
+    }
+
+    public static JComboBox getComboBoxByName(String name) {
+        if (comboMap.containsKey(name)) {
+            return comboMap.get(name);
         }
         else {
             return null;
@@ -143,13 +246,26 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btOpen;
+    private javax.swing.JButton btRun;
     private javax.swing.JButton btSelect;
+    private javax.swing.JComboBox cbMassUnit;
+    private javax.swing.JPanel fastaPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JPanel mgfPanel;
+    private javax.swing.JSpinner spDecimal;
+    private javax.swing.JSpinner spMassTol;
+    private javax.swing.JSpinner spPeakFilter;
     private javax.swing.JTextField tfMgfFile;
     // End of variables declaration//GEN-END:variables
 }
