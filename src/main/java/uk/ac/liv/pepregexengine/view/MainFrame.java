@@ -1,14 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package uk.ac.liv.pepregexengine.view;
 
-import java.awt.Component;
 import java.util.HashMap;
 import java.util.Map;
+import javax.swing.text.JTextComponent;
 import uk.ac.liv.pepregexengine.listener.LoadMgfFileListener;
 
 /**
@@ -17,7 +12,7 @@ import uk.ac.liv.pepregexengine.listener.LoadMgfFileListener;
  */
 public class MainFrame extends javax.swing.JFrame {
 
-    private static Map<String, Component> componentMap = new HashMap<>();
+    private static Map<String, JTextComponent> componentMap = new HashMap<>();
 
     /**
      * Creates new form MainFrame
@@ -37,35 +32,56 @@ public class MainFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        btLoadMgf = new javax.swing.JButton();
+        mgfPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
         tfMgfFile = new javax.swing.JTextField();
-        jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        btOpen = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        jTextField1 = new javax.swing.JTextField();
+        btSelect = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Peptide Regex Engine");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        jPanel1.setPreferredSize(new java.awt.Dimension(200, 279));
-        jPanel1.setLayout(new java.awt.GridLayout(5, 2, 3, 3));
+        jPanel1.setLayout(new java.awt.GridLayout(9, 1, 0, 5));
 
-        btLoadMgf.setText("LoadMgfFile");
-        jPanel1.add(btLoadMgf);
-        btLoadMgf.addActionListener(new LoadMgfFileListener());
-        jPanel1.add(tfMgfFile);
-        tfMgfFile.setName("tfMgfFile");
+        java.awt.FlowLayout flowLayout1 = new java.awt.FlowLayout(java.awt.FlowLayout.LEFT, 10, 10);
+        flowLayout1.setAlignOnBaseline(true);
+        mgfPanel.setLayout(flowLayout1);
+
+        jLabel1.setText("MGF File:");
+        mgfPanel.add(jLabel1);
+
+        tfMgfFile.setEditable(false);
+        tfMgfFile.setPreferredSize(new java.awt.Dimension(350, 25));
+        mgfPanel.add(tfMgfFile);
         componentMap.put("tfMgfFile", tfMgfFile);
 
-        getContentPane().add(jPanel1, java.awt.BorderLayout.LINE_START);
+        btOpen.setText("Open");
+        mgfPanel.add(btOpen);
+        btOpen.addActionListener(new LoadMgfFileListener());
 
-        jMenu1.setText("File");
-        jMenuBar1.add(jMenu1);
+        jPanel1.add(mgfPanel);
 
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
+        java.awt.FlowLayout flowLayout2 = new java.awt.FlowLayout(java.awt.FlowLayout.LEADING, 10, 10);
+        flowLayout2.setAlignOnBaseline(true);
+        jPanel2.setLayout(flowLayout2);
 
-        setJMenuBar(jMenuBar1);
+        jLabel2.setText("FASTA File:");
+        jPanel2.add(jLabel2);
+
+        jTextField1.setEditable(false);
+        jTextField1.setPreferredSize(new java.awt.Dimension(340, 25));
+        jPanel2.add(jTextField1);
+
+        btSelect.setText("Select");
+        jPanel2.add(btSelect);
+
+        jPanel1.add(jPanel2);
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -116,9 +132,9 @@ public class MainFrame extends javax.swing.JFrame {
         });
     }
 
-    public static Component getComponentByName(String name) {
+    public static JTextComponent getComponentByName(String name) {
         if (componentMap.containsKey(name)) {
-            return (Component) componentMap.get(name);
+            return (JTextComponent) componentMap.get(name);
         }
         else {
             return null;
@@ -126,11 +142,14 @@ public class MainFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btLoadMgf;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JButton btOpen;
+    private javax.swing.JButton btSelect;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JTextField jTextField1;
+    private javax.swing.JPanel mgfPanel;
     private javax.swing.JTextField tfMgfFile;
     // End of variables declaration//GEN-END:variables
 }

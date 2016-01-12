@@ -1,4 +1,3 @@
-
 package uk.ac.liv.pepregexengine.listener;
 
 import java.awt.event.ActionEvent;
@@ -33,7 +32,7 @@ public class LoadMgfFileListener implements ActionListener {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File mgfFile = mgfFC.getSelectedFile();
             GlobalConfig.getInstance().setMfgFolder(mgfFile.getParentFile());
-            MainFrame.getFrames();
+            MainFrame.getComponentByName("tfMgfFile").setText(mgfFile.getAbsolutePath());
         }
     }
     
