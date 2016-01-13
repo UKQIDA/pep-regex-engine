@@ -1,13 +1,13 @@
 
-package uk.ac.liv.pepregexengine.listener;
+package uk.ac.liv.pepregexengine.gui.listener;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import uk.ac.liv.pepregexengine.config.GlobalConfig;
-import uk.ac.liv.pepregexengine.view.MainFrame;
+import uk.ac.liv.pepregexengine.gui.config.GlobalConfig;
+import uk.ac.liv.pepregexengine.gui.MainFrame;
 
 /**
  *

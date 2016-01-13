@@ -1,5 +1,4 @@
-
-package uk.ac.liv.pepregexengine.config;
+package uk.ac.liv.pepregexengine.gui.config;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,15 +24,18 @@ public class GlobalConfig {
     }
 
     private File mfgFolder;
+    private File outputDir;
     private MassTolerance mt;
     private int peakFilter;
     private int dp;
+    private boolean spectrumTag;
 
     public GlobalConfig() {
         try {
             mfgFolder = new File(new File(".").getCanonicalPath());
-        }
-        catch (IOException ex) {
+            outputDir = new File(new File(".").getCanonicalPath());
+            mt = new MassTolerance(10.0, "ppm");
+        } catch (IOException ex) {
             //TODO
             Logger.getLogger(GlobalConfig.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -93,6 +95,34 @@ public class GlobalConfig {
      */
     public void setDp(int dp) {
         this.dp = dp;
+    }
+
+    /**
+     * @return the outputDir
+     */
+    public File getOutputDir() {
+        return outputDir;
+    }
+
+    /**
+     * @param outputDir the outputDir to set
+     */
+    public void setOutputDir(File outputDir) {
+        this.outputDir = outputDir;
+    }
+
+    /**
+     * @return the spectrumTag
+     */
+    public boolean isSpectrumTag() {
+        return spectrumTag;
+    }
+
+    /**
+     * @param spectrumTag the spectrumTag to set
+     */
+    public void setSpectrumTag(boolean spectrumTag) {
+        this.spectrumTag = spectrumTag;
     }
 
 }

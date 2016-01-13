@@ -19,7 +19,7 @@ import uk.ac.ebi.pride.tools.jmzreader.JMzReaderException;
 import uk.ac.liv.pepregexengine.command.CliConstants;
 import uk.ac.liv.pepregexengine.data.constants.Constants;
 import uk.ac.liv.pepregexengine.data.tolerance.MassTolerance;
-import uk.ac.liv.pepregexengine.view.MainFrame;
+import uk.ac.liv.pepregexengine.gui.MainFrame;
 
 /**
  *
