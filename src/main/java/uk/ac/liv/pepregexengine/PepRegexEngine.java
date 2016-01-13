@@ -236,7 +236,7 @@ public class PepRegexEngine {
                 }
                 DecimalFormat df = new DecimalFormat(dfString);
 
-                MgfReader mgfRd = new MgfReader(new File(mgfFile));
+                MgfReader mgfRd = new MgfReader(new File(mgfFile), mt, df);
 
                 //output Tag generation result
                 if (line.hasOption("t")) {

@@ -34,9 +34,9 @@ public class SpectrumTags {
         this.mgfRd = null;
     }
 
-    public SpectrumTags(File spectrumFile)
+    public SpectrumTags(File spectrumFile, MassTolerance mt, DecimalFormat df)
             throws JMzReaderException, IOException {
-        this.mgfRd = new MgfReader(spectrumFile);
+        this.mgfRd = new MgfReader(spectrumFile, mt, df);
     }
 
     /**

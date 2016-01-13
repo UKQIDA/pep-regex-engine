@@ -35,6 +35,8 @@ public class GlobalConfig {
             mfgFolder = new File(new File(".").getCanonicalPath());
             outputDir = new File(new File(".").getCanonicalPath());
             mt = new MassTolerance(10.0, "ppm");
+            dp =2;
+            spectrumTag = true;
         } catch (IOException ex) {
             //TODO
             Logger.getLogger(GlobalConfig.class.getName()).log(Level.SEVERE, null, ex);

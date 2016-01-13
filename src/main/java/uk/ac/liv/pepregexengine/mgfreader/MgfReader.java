@@ -44,12 +44,12 @@ public class MgfReader {
         return prmSpectrumTagsMap;
     }
 
-    public MgfReader(File file)
+    public MgfReader(File file, MassTolerance mt, DecimalFormat df)
             throws JMzReaderException, IOException {
         this.mgfFilename = file.getCanonicalPath();
         this.mgfFile = new MgfFile(file);
 //        System.out.println("Start loading spectrum file ......");
-//        loadSpectraFromFile(file);
+        loadSpectraFromFile(mt, df);
     }
 
     private void loadSpectraFromFile(MassTolerance mt, DecimalFormat df)
@@ -118,7 +118,7 @@ public class MgfReader {
     public void writePRMSpectruTags(String filename, MassTolerance mt,
                                     DecimalFormat df)
             throws JMzReaderException {
-        loadSpectraFromFile(mt, df);
+        //loadSpectraFromFile(mt, df);
         try (FileWriter writer = new FileWriter(filename.replace(".csv", "_") + mt.getDelta() + "_" + df.toPattern().replace(".", "_") + ".csv")) {
             writer.write("Parameters, Input Mgf file, " + this.mgfFilename + ", " + mt.toString() + ", Decimal Place, " + df.toPattern() + "\n");
             writer.write("Spectrum title, tag, prefix mass, suffix mass\n");

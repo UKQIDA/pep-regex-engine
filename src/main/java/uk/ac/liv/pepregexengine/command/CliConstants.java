@@ -17,6 +17,6 @@ public class CliConstants {
     public static final String FILTER_DESCRIPTION = "use this number to get the peaks with highest intensity value in the list.";
     public static final String TAG_FILE_DESCRIPTION = "specify the tag output file.";
     public static final String MASS_TOLERANCE_DESCRIPTION = "set mass tolerance value.";
-    public static final String MASS_UNIT_DESCRIPTION = "set mass tolerance unit: Da or Unit.";
+    public static final String MASS_UNIT_DESCRIPTION = "set mass tolerance unit: Da or ppm.";
     public static final String GUI_DESCRIPTION = "call the Graphic User Interface window.";
 }

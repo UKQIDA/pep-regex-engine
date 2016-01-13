@@ -14,6 +14,7 @@ import javax.swing.JComboBox;
 import javax.swing.JSpinner;
 import javax.swing.UIManager;
 import javax.swing.text.JTextComponent;
+import uk.ac.liv.pepregexengine.gui.listener.FastaFileListener;
 import uk.ac.liv.pepregexengine.gui.listener.SpectrumTagListener;
 
 /**
@@ -54,8 +55,12 @@ public class MainFrame extends javax.swing.JFrame {
         tfMgfFile = new javax.swing.JTextField();
         btMgfFile = new javax.swing.JButton();
         fastaPanel = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jPanel2 = new javax.swing.JPanel();
+        tfFastaFile = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
         btFastaFile = new javax.swing.JButton();
         optionPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
@@ -63,8 +68,6 @@ public class MainFrame extends javax.swing.JFrame {
         cbMassUnit = new javax.swing.JComboBox();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        spDecimal = new javax.swing.JSpinner();
         jLabel11 = new javax.swing.JLabel();
         cbSpectrumTag = new javax.swing.JCheckBox();
         outputPanel = new javax.swing.JPanel();
@@ -76,7 +79,7 @@ public class MainFrame extends javax.swing.JFrame {
         jProgressBar1 = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Proteoformer-TD");
+        setTitle("Proteoformer-TD-alpha");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jPanel1.setLayout(new java.awt.GridLayout(5, 1));
@@ -89,7 +92,7 @@ public class MainFrame extends javax.swing.JFrame {
         mgfPanel.add(jLabel1);
 
         tfMgfFile.setEditable(false);
-        tfMgfFile.setPreferredSize(new java.awt.Dimension(350, 25));
+        tfMgfFile.setPreferredSize(new java.awt.Dimension(403, 25));
         mgfPanel.add(tfMgfFile);
         textComponentMap.put("tfMgfFile", tfMgfFile);
 
@@ -103,15 +106,32 @@ public class MainFrame extends javax.swing.JFrame {
         flowLayout2.setAlignOnBaseline(true);
         fastaPanel.setLayout(flowLayout2);
 
-        jLabel2.setText("FASTA File:");
-        fastaPanel.add(jLabel2);
+        jPanel3.setLayout(new java.awt.GridLayout(2, 1));
 
-        jTextField1.setEditable(false);
-        jTextField1.setPreferredSize(new java.awt.Dimension(340, 25));
-        fastaPanel.add(jTextField1);
+        jLabel2.setText("FASTA File:");
+        jPanel3.add(jLabel2);
+
+        fastaPanel.add(jPanel3);
+
+        jPanel2.setLayout(new java.awt.GridLayout(2, 1));
+
+        tfFastaFile.setEditable(false);
+        tfFastaFile.setPreferredSize(new java.awt.Dimension(340, 25));
+        jPanel2.add(tfFastaFile);
+        textComponentMap.put("tfFastaFile", tfFastaFile);
+
+        jLabel4.setText("Warning: DO select 'Output Spectrum Tag File when FASTA File is not designated.");
+        jPanel2.add(jLabel4);
+
+        fastaPanel.add(jPanel2);
+
+        jPanel4.setLayout(new java.awt.GridLayout(2, 1));
 
         btFastaFile.setText("Browse");
-        fastaPanel.add(btFastaFile);
+        jPanel4.add(btFastaFile);
+        btFastaFile.addActionListener(new FastaFileListener());
+
+        fastaPanel.add(jPanel4);
 
         jPanel1.add(fastaPanel);
 
@@ -123,7 +143,7 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel3.setText("Mass tol: ");
         optionPanel.add(jLabel3);
 
-        spMassTol.setModel(new javax.swing.SpinnerNumberModel(10.0d, 0.0d, null, 0.01d));
+        spMassTol.setModel(new javax.swing.SpinnerNumberModel(Double.valueOf(10.0d), Double.valueOf(0.0d), null, Double.valueOf(0.01d)));
         spMassTol.setPreferredSize(new java.awt.Dimension(50, 20));
         optionPanel.add(spMassTol);
         spinnerMap.put("spMassTol",spMassTol);
@@ -137,18 +157,10 @@ public class MainFrame extends javax.swing.JFrame {
         comboMap.put("cbMassUnit", cbMassUnit);
         optionPanel.add(jLabel9);
         optionPanel.add(jLabel10);
-
-        jLabel7.setText("Decimal:");
-        optionPanel.add(jLabel7);
-
-        spDecimal.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
-        optionPanel.add(spDecimal);
-        spinnerMap.put("spDecimal", spDecimal);
-
-        spDecimal.addChangeListener(new DecimalListener());
         optionPanel.add(jLabel11);
 
-        cbSpectrumTag.setText("Spectrum Tag");
+        cbSpectrumTag.setSelected(true);
+        cbSpectrumTag.setText("Output Spectrum Tag File");
         optionPanel.add(cbSpectrumTag);
         cbSpectrumTag.addChangeListener(new SpectrumTagListener());
         checkBoxMap.put("cbSpectrumTag", cbSpectrumTag);
@@ -162,7 +174,7 @@ public class MainFrame extends javax.swing.JFrame {
         jLabel8.setText("Output Files Directory:");
         outputPanel.add(jLabel8);
 
-        tfOutputDir.setPreferredSize(new java.awt.Dimension(285, 25));
+        tfOutputDir.setPreferredSize(new java.awt.Dimension(338, 25));
         outputPanel.add(tfOutputDir);
         textComponentMap.put("tfOutputDir", tfOutputDir);
 
@@ -274,18 +286,20 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JProgressBar jProgressBar1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JPanel mgfPanel;
     private javax.swing.JPanel optionPanel;
     private javax.swing.JPanel outputPanel;
-    private javax.swing.JSpinner spDecimal;
     private javax.swing.JSpinner spMassTol;
+    private javax.swing.JTextField tfFastaFile;
     private javax.swing.JTextField tfMgfFile;
     private javax.swing.JTextField tfOutputDir;
     // End of variables declaration//GEN-END:variables
